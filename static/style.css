@@ -1,0 +1,59 @@
+:root {
+    --canvas-bg: #f4f6f9;
+    --navy-sidebar: #0a192f;
+    --primary-blue: #1e50ff;
+    --success-green: #22c55e;
+}
+
+body.bg-canvas {
+    background-color: var(--canvas-bg);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.text-navy {
+    color: #0a192f !important;
+}
+
+.bg-navy {
+    background-color: #0a192f !important;
+}
+
+.card-custom {
+    border-radius: 12px;
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.sidebar {
+    min-height: 100vh;
+    width: 260px;
+    transition: all 0.3s;
+}
+
+.sidebar .list-group-item {
+    background-color: transparent;
+    color: #94a3b8;
+    border: none;
+    font-weight: 500;
+}
+
+.sidebar .list-group-item.active {
+    background-color: var(--primary-blue);
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.sidebar .list-group-item:hover:not(.active) {
+    background-color: rgba(255, 255, 255, 0.06);
+    color: #ffffff;
+}
+
+.avatar-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}

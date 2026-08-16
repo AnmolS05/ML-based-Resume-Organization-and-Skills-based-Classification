@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Matching Results - HR ATS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center pb-3 mb-4 border-bottom">
+    <div>
+        <h2 class="fw-bold text-navy mb-1">Matching Results – {{ job.role }}</h2>
+        <p class="text-muted small">25 candidates analyzed based on weighted ATS scoring criteria.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="#" class="btn btn-outline-primary fw-bold px-3 py-2 rounded-3">
+            <i class="fa-solid fa-download me-1"></i> Download Report
+        </a>
+    </div>
+</div>
+
+<div class="d-flex flex-column gap-3 mb-4">
+    {% for c in candidates %}
+    <div class="card card-custom border-0 p-4 {% if c.rank == 1 %}border-start border-warning border-4{% endif %}">
+        <div class="row align-items-center g-3">
+            
+            <div class="col-lg-4 d-flex align-items-center gap-3">
+                <div>
+                    {% if c.rank == 1 %}
+                        <div class="medal-box bg-warning-subtle text-warning fw-bold border border-warning rounded-3 p-2 text-center" style="width: 50px;">🥇 #1</div>
+                    {% elif c.rank == 2 %}
+                        <div class="medal-box bg-secondary-subtle text-secondary fw-bold border rounded-3 p-2 text-center" style="width: 50px;">🥈 #2</div>
+                    {% elif c.rank == 3 %}
+                        <div class="medal-box bg-danger-subtle text-danger fw-bold border rounded-3 p-2 text-center" style="width: 50px;">🥉 #3</div>
+                    {% else %}
+                        <div class="medal-box bg-light text-dark fw-bold border rounded-3 p-2 text-center" style="width: 50px;">#{{ c.rank }}</div>
+                    {% endif %}
+                </div>
+                <div>
+                    <h5 class="fw-bold text-navy mb-0">{{ c.name }}</h5>
+                    <div class="small text-muted">{{ c.email }}</div>
+                    <span class="badge bg-light text-dark border mt-1">{{ c.experience }} Exp</span>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="mb-2">
+                    <div class="d-flex justify-content-between small fw-bold">
+                        <span>Skill Match (60% weight)</span>
+                        <span class="text-success">{{ c.skill_match_percentage }}%</span>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-success" style="width: {{ c.skill_match_percentage }}%;"></div>
+                    </div>
+                </div>
+
+                <div class="mb-2">
+                    <div class="d-flex justify-content-between small fw-bold">
+                        <span>Experience (20% weight)</span>
+                        <span class="text-primary">{{ c.experience }}</span>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-primary" style="width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 text-lg-end d-flex d-lg-block justify-content-between align-items-center">
+                <div>
+                    <div class="fs-3 fw-bold text-navy">{{ "%.2f"|format(c.ats_score) }}%</div>
+                    <span class="badge bg-success-subtle text-success small">Strong Match</span>
+                </div>
+                <div class="mt-2">
+                    <a href="{{ url_for('candidate_profile', candidate_id=c.id) }}" class="btn btn-primary btn-sm rounded-3 px-3">
+                        View Details <i class="fa-solid fa-chevron-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<p class="text-center text-muted small mt-4">
+    Scores are calculated based on: Skills (60%), Experience (20%), Projects (10%), Education (10%)
+</p>
+{% endblock %}

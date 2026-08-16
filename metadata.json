@@ -1,0 +1,6 @@
+{
+  "name": "AI Resume Screening & ATS Dashboard",
+  "description": "AI-Powered Resume Screening, Email Scanner, and Candidate Ranking ATS System with real-time scoring, job description matching, and candidate explanations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}HR Email Scanner & ATS{% endblock %}</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <!-- Custom Theme Styles -->
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+</head>
+<body class="bg-canvas">
+    <div class="d-flex" id="wrapper">
+        
+        <!-- Persistent Dark Navy Sidebar -->
+        <div class="sidebar bg-navy text-white" id="sidebar-wrapper">
+            <div class="sidebar-heading px-4 py-3 border-bottom border-secondary-subtle d-flex align-items-center gap-2">
+                <div class="brand-icon bg-primary text-white rounded-3 p-2">
+                    <i class="fa-solid fa-envelope"></i>
+                </div>
+                <div>
+                    <h6 class="mb-0 fw-bold">HR ATS Scanner</h6>
+                    <small class="text-info text-uppercase" style="font-size: 10px;">Stage 9 System</small>
+                </div>
+            </div>
+            
+            <div class="list-group list-group-flush my-3 px-2">
+                <a href="{{ url_for('dashboard') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'dashboard' %}active{% endif %} rounded-3 mb-1">
+                    <i class="fa-solid fa-gauge me-2"></i> Dashboard
+                </a>
+                <a href="{{ url_for('emails') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'emails' %}active{% endif %} rounded-3 mb-1">
+                    <i class="fa-solid fa-inbox me-2"></i> Email Scanner
+                </a>
+                <a href="{{ url_for('job_analysis') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'job_analysis' %}active{% endif %} rounded-3 mb-1">
+                    <i class="fa-solid fa-briefcase me-2"></i> Jobs (Active)
+                </a>
+                <a href="{{ url_for('results') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'results' %}active{% endif %} rounded-3 mb-1">
+                    <i class="fa-solid fa-ranking-star me-2"></i> Candidate Rankings
+                </a>
+                <a href="{{ url_for('logout') }}" class="list-group-item list-group-item-action text-danger rounded-3 mt-4">
+                    <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
+                </a>
+            </div>
+            
+            <!-- User Footer Profile Card -->
+            <div class="mt-auto p-3 border-top border-secondary-subtle">
+                <div class="d-flex align-items-center gap-2 bg-dark-subtle p-2 rounded-3">
+                    <div class="avatar-circle bg-primary text-white fw-bold">HA</div>
+                    <div class="overflow-hidden">
+                        <div class="fw-bold text-white small text-truncate">HR Admin</div>
+                        <div class="text-muted small text-truncate" style="font-size: 11px;">admin@company.com</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page Content Wrapper -->
+        <div id="page-content-wrapper" class="w-100">
+            <!-- Top Navbar for Mobile Toggle & Status Alerts -->
+            <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom px-4 py-2">
+                <div class="container-fluid px-0">
+                    <button class="btn btn-outline-primary d-lg-none" id="sidebarToggle">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div class="ms-auto d-flex align-items-center gap-3">
+                        <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill">
+                            <i class="fa-solid fa-circle-check me-1"></i> ATS Model Online
+                        </span>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Main Body Container -->
+            <main class="container-fluid px-4 py-4">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show rounded-3 shadow-sm mb-4" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', () => {
+                document.getElementById('wrapper').classList.toggle('toggled');
+            });
+        }
+    </script>
+</body>
+</html>

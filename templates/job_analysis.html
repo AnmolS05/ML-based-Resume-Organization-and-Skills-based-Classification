@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Create Job Analysis - HR ATS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center pb-3 mb-4 border-bottom">
+    <div>
+        <h2 class="fw-bold text-navy mb-1">Create Job Analysis</h2>
+        <p class="text-muted small">Configure matching criteria and mandatory skills for ATS scoring.</p>
+    </div>
+    <div class="d-flex align-items-center gap-2 bg-white px-3 py-2 rounded-3 border shadow-sm">
+        <div class="avatar-circle bg-primary text-white fw-bold">HA</div>
+        <div>
+            <div class="fw-bold small">HR Admin</div>
+            <small class="text-success fw-semibold"><i class="fa-solid fa-circle fa-2xs"></i> Active</small>
+        </div>
+    </div>
+</div>
+
+<div class="card card-custom border-0 p-4 p-md-5">
+    <form action="{{ url_for('job_analysis') }}" method="POST">
+        <div class="row g-4">
+            <div class="col-lg-5">
+                <div class="mb-3">
+                    <label class="form-label fw-bold text-uppercase small text-muted">Job Role *</label>
+                    <input type="text" name="role" class="form-control form-control-lg bg-light" value="{{ job.role }}" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold text-uppercase small text-muted">Required Experience *</label>
+                    <select name="experience" class="form-select form-select-lg bg-light">
+                        <option value="1 Year" {% if job.experience == '1 Year' %}selected{% endif %}>1 Year</option>
+                        <option value="2 Years" {% if job.experience == '2 Years' %}selected{% endif %}>2 Years</option>
+                        <option value="3 Years" {% if job.experience == '3 Years' %}selected{% endif %}>3 Years</option>
+                        <option value="5+ Years" {% if job.experience == '5+ Years' %}selected{% endif %}>5+ Years</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold text-uppercase small text-muted">Mandatory Skills (60% Weight)</label>
+                    <div class="d-flex flex-wrap gap-2 p-3 bg-light rounded-3 border">
+                        <span class="badge bg-white text-primary border p-2"><i class="fa-solid fa-check text-success me-1"></i> Python</span>
+                        <span class="badge bg-white text-primary border p-2"><i class="fa-solid fa-check text-success me-1"></i> Django</span>
+                        <span class="badge bg-white text-primary border p-2"><i class="fa-solid fa-check text-success me-1"></i> REST API</span>
+                        <span class="badge bg-white text-primary border p-2"><i class="fa-solid fa-check text-success me-1"></i> SQL</span>
+                        <span class="badge bg-white text-primary border p-2"><i class="fa-solid fa-check text-success me-1"></i> MySQL</span>
+                        <span class="badge bg-white text-primary border p-2"><i class="fa-solid fa-check text-success me-1"></i> Git</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-7">
+                <label class="form-label fw-bold text-uppercase small text-muted">Job Description *</label>
+                <textarea name="description" rows="12" class="form-control bg-light font-monospace" required>{{ job.description }}</textarea>
+            </div>
+        </div>
+
+        <div class="alert alert-info border-info-subtle d-flex align-items-center gap-3 mt-4 mb-4 rounded-3">
+            <i class="fa-solid fa-circle-info fs-5 text-primary"></i>
+            <div>Our system will analyze all candidate resumes and rank them based on skills, experience, projects and education match.</div>
+        </div>
+
+        <div class="text-end">
+            <button type="submit" class="btn btn-primary btn-lg fw-bold px-5 py-3 rounded-3 shadow">
+                <i class="fa-solid fa-rocket me-2"></i> Analyze Candidates
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
