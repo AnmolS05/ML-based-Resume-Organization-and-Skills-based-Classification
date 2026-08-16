@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useOutletContext } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useOutletContext, useNavigate, useParams } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { MainLayout } from './components/layout/MainLayout';
 import { HomeView } from './components/HomeView';
@@ -301,7 +301,7 @@ function AttachmentsRoute({ attachments, emails, onViewResume }: any) {
 function JobAnalysisRoute({ jobRequirement, isAnalyzing, onSaveAndAnalyze }: any) {
   const { showToast } = useOutletContext<{ showToast: (msg: string) => void }>();
   // We need navigate inside the route wrapper
-  const navigate = require('react-router-dom').useNavigate();
+  const navigate = useNavigate();
   return <JobAnalysisView 
     jobRequirement={jobRequirement} isAnalyzing={isAnalyzing}
     onSaveAndAnalyze={(updatedReq: any) => onSaveAndAnalyze(updatedReq, navigate, showToast)}
@@ -310,7 +310,7 @@ function JobAnalysisRoute({ jobRequirement, isAnalyzing, onSaveAndAnalyze }: any
 
 function ResultsRoute({ candidates, jobRequirement }: any) {
   const { showToast } = useOutletContext<{ showToast: (msg: string) => void }>();
-  const navigate = require('react-router-dom').useNavigate();
+  const navigate = useNavigate();
   return <ResultsView 
     candidates={candidates} jobRequirement={jobRequirement}
     onSelectCandidate={(id: number) => navigate(`/profile/${id}`)}
@@ -320,8 +320,8 @@ function ResultsRoute({ candidates, jobRequirement }: any) {
 }
 
 function ProfileRoute({ candidates, jobRequirement, onViewResumeModal }: any) {
-  const navigate = require('react-router-dom').useNavigate();
-  const { candidateId } = require('react-router-dom').useParams();
+  const navigate = useNavigate();
+  const { candidateId } = useParams();
   const activeCandidate = candidates.find((c: any) => c.id === Number(candidateId)) || candidates[0];
   return <ProfileView 
     candidate={activeCandidate} jobRequirement={jobRequirement}
