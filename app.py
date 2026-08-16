@@ -200,13 +200,116 @@ def candidate_profile(candidate_id):
 # 4. TRIGGER APIS (SCAN & PROCESS RESUMES)
 # ==========================================
 
+import imaplib
+import email
+from email.header import decode_header
+import datetime
+
+def fetch_unread_emails_from_imap():
+    imap_server = os.environ.get("IMAP_SERVER")
+    username = os.environ.get("IMAP_USERNAME")
+    password = os.environ.get("IMAP_PASSWORD")
+    
+    if not imap_server or not username or not password:
+        print("IMAP credentials not found in environment variables.")
+        return 0
+        
+    upload_dir = os.path.join(os.path.dirname(__file__), 'static', 'uploads')
+    os.makedirs(upload_dir, exist_ok=True)
+    
+    try:
+        mail = imaplib.IMAP4_SSL(imap_server)
+        mail.login(username, password)
+        mail.select("inbox")
+        
+        status, messages = mail.search(None, "UNSEEN")
+        if status != "OK" or not messages[0]:
+            return 0
+            
+        email_ids = messages[0].split()
+        new_emails_count = 0
+        
+        conn = get_db_connection()
+        
+        for e_id in email_ids:
+            res, msg_data = mail.fetch(e_id, "(RFC822)")
+            for response_part in msg_data:
+                if isinstance(response_part, tuple):
+                    msg = email.message_from_bytes(response_part[1])
+                    
+                    subject, encoding = decode_header(msg["Subject"])[0]
+                    if isinstance(subject, bytes):
+                        subject = subject.decode(encoding if encoding else "utf-8")
+                        
+                    sender = msg.get("From", "")
+                    date_tuple = email.utils.parsedate_tz(msg.get("Date"))
+                    if date_tuple:
+                        date = datetime.datetime.fromtimestamp(email.utils.mktime_tz(date_tuple)).strftime("%Y-%m-%d %I:%M %p")
+                    else:
+                        date = datetime.datetime.now().strftime("%Y-%m-%d %I:%M %p")
+                        
+                    body = ""
+                    attachments = []
+                    
+                    if msg.is_multipart():
+                        for part in msg.walk():
+                            content_type = part.get_content_type()
+                            content_disposition = str(part.get("Content-Disposition"))
+                            
+                            if content_type == "text/plain" and "attachment" not in content_disposition:
+                                body += part.get_payload(decode=True).decode()
+                                
+                            elif "attachment" in content_disposition:
+                                filename = part.get_filename()
+                                if filename:
+                                    filepath = os.path.join(upload_dir, filename)
+                                    with open(filepath, "wb") as f:
+                                        f.write(part.get_payload(decode=True))
+                                    attachments.append({
+                                        "file_name": filename,
+                                        "file_path": f"/static/uploads/{filename}",
+                                        "file_type": content_type
+                                    })
+                    else:
+                        body = msg.get_payload(decode=True).decode()
+                        
+                    cursor = conn.execute(
+                        "INSERT INTO emails (sender, subject, date, body) VALUES (?, ?, ?, ?)",
+                        (sender, subject, date, body)
+                    )
+                    email_id = cursor.lastrowid
+                    
+                    for att in attachments:
+                        is_resume = 1 if att["file_name"].lower().endswith(('.pdf', '.docx', '.doc')) else 0
+                        conn.execute(
+                            "INSERT INTO attachments (email_id, file_name, file_path, file_type, is_resume) VALUES (?, ?, ?, ?, ?)",
+                            (email_id, att["file_name"], att["file_path"], att["file_type"], is_resume)
+                        )
+                        
+                    new_emails_count += 1
+        
+        conn.commit()
+        conn.close()
+        mail.logout()
+        return new_emails_count
+        
+    except Exception as e:
+        print(f"IMAP Error: {e}")
+        return 0
+
 @app.route("/scan-emails", methods=["POST"])
 @login_required
 def scan_emails():
     """Trigger email ingestion pipeline."""
-    flash("Email scanning completed. 6 new candidate emails scanned and synchronized.", "success")
+    new_emails = fetch_unread_emails_from_imap()
+    
+    if new_emails > 0:
+        flash(f"Email scanning completed. {new_emails} new candidate emails scanned and synchronized.", "success")
+    else:
+        flash("Email scanning completed. No new unread emails found (or missing IMAP config).", "info")
+        
     if request.is_json:
-        return jsonify({"status": "success", "message": "Email scanning completed", "new_emails": 6})
+        return jsonify({"status": "success", "message": "Email scanning completed", "new_emails": new_emails})
     return redirect(url_for("emails"))
 
 @app.route("/process-resumes", methods=["POST"])
