@@ -101,7 +101,7 @@ export const KanbanView: React.FC = () => {
       <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-slate-200/50 gap-4 shrink-0">
         <div>
           <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0a192f] to-[#1e50ff] tracking-tight">
-            Recruitment Pipeline
+            Hiring Board
           </h1>
           <p className="text-sm font-medium text-slate-500 mt-1">
             Drag and drop candidates across stages to manage their hiring lifecycle.

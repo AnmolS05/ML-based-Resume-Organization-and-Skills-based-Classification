@@ -68,7 +68,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, badge: null },
     { id: 'messages', label: 'Team Chat', icon: MessageSquare, badge: '3', badgeColor: 'bg-rose-500/20 text-rose-400 border-rose-500/30' },
-    { id: 'pipeline', label: 'Kanban Pipeline', icon: KanbanSquare, badge: null },
+    { id: 'pipeline', label: 'Hiring Tracker', icon: KanbanSquare, badge: null },
     { id: 'calendar', label: 'Interviews', icon: Calendar, badge: '2', badgeColor: 'bg-purple-500/20 text-purple-400 border-purple-500/30' },
     { id: 'offers', label: 'Offers & Onboarding', icon: FileText, badge: '4', badgeColor: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' },
     { id: 'analytics', label: 'Analytics & Reports', icon: BarChart2, badge: 'New', badgeColor: 'bg-rose-500/20 text-rose-400 border-rose-500/30' },
